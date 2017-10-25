@@ -124,37 +124,47 @@ void NuttallWindow(int y_length, double *y) {
 // FFT, IFFT and minimum phase analysis
 void InitializeForwardRealFFT(int fft_size, ForwardRealFFT *forward_real_fft) {
   forward_real_fft->fft_size = fft_size;
-  forward_real_fft->waveform = new double[fft_size];
-  forward_real_fft->spectrum = new fft_complex[fft_size];
+//  forward_real_fft->waveform = new double[fft_size];
+  forward_real_fft->waveform = fftw_alloc_real(fft_size);
+//  forward_real_fft->spectrum = new fft_complex[fft_size];
+  forward_real_fft->spectrum = fftw_alloc_complex(fft_size);
   forward_real_fft->forward_fft = fft_plan_dft_r2c_1d(fft_size,
       forward_real_fft->waveform, forward_real_fft->spectrum, FFT_ESTIMATE);
 }
 
 void DestroyForwardRealFFT(ForwardRealFFT *forward_real_fft) {
   fft_destroy_plan(forward_real_fft->forward_fft);
-  delete[] forward_real_fft->spectrum;
-  delete[] forward_real_fft->waveform;
+  fftw_free(forward_real_fft->spectrum);
+//  delete[] forward_real_fft->spectrum;
+  fftw_free(forward_real_fft->waveform);
+//  delete[] forward_real_fft->waveform;
 }
 
 void InitializeInverseRealFFT(int fft_size, InverseRealFFT *inverse_real_fft) {
   inverse_real_fft->fft_size = fft_size;
-  inverse_real_fft->waveform = new double[fft_size];
-  inverse_real_fft->spectrum = new fft_complex[fft_size];
+  inverse_real_fft->waveform = fftw_alloc_real(fft_size);
+//  inverse_real_fft->waveform = new double[fft_size];
+  inverse_real_fft->spectrum = fftw_alloc_complex(fft_size);
+//  inverse_real_fft->spectrum = new fft_complex[fft_size];
   inverse_real_fft->inverse_fft = fft_plan_dft_c2r_1d(fft_size,
       inverse_real_fft->spectrum, inverse_real_fft->waveform, FFT_ESTIMATE);
 }
 
 void DestroyInverseRealFFT(InverseRealFFT *inverse_real_fft) {
   fft_destroy_plan(inverse_real_fft->inverse_fft);
-  delete[] inverse_real_fft->spectrum;
-  delete[] inverse_real_fft->waveform;
+  fftw_free(inverse_real_fft->spectrum);
+//  delete[] inverse_real_fft->spectrum;
+  fftw_free(inverse_real_fft->waveform);
+//  delete[] inverse_real_fft->waveform;
 }
 
 void InitializeInverseComplexFFT(int fft_size,
     InverseComplexFFT *inverse_complex_fft) {
   inverse_complex_fft->fft_size = fft_size;
-  inverse_complex_fft->input = new fft_complex[fft_size];
-  inverse_complex_fft->output = new fft_complex[fft_size];
+  inverse_complex_fft->input = fftw_alloc_complex(fft_size);
+//  inverse_complex_fft->input = new fft_complex[fft_size];
+  inverse_complex_fft->output = fftw_alloc_complex(fft_size);
+//  inverse_complex_fft->output = new fft_complex[fft_size];
   inverse_complex_fft->inverse_fft = fft_plan_dft_1d(fft_size,
     inverse_complex_fft->input, inverse_complex_fft->output,
     FFT_BACKWARD, FFT_ESTIMATE);
@@ -162,16 +172,21 @@ void InitializeInverseComplexFFT(int fft_size,
 
 void DestroyInverseComplexFFT(InverseComplexFFT *inverse_complex_fft) {
   fft_destroy_plan(inverse_complex_fft->inverse_fft);
-  delete[] inverse_complex_fft->input;
-  delete[] inverse_complex_fft->output;
+  fftw_free(inverse_complex_fft->input);
+//  delete[] inverse_complex_fft->input;
+  fftw_free(inverse_complex_fft->output);
+//  delete[] inverse_complex_fft->output;
 }
 
 void InitializeMinimumPhaseAnalysis(int fft_size,
     MinimumPhaseAnalysis *minimum_phase) {
   minimum_phase->fft_size = fft_size;
-  minimum_phase->log_spectrum = new double[fft_size];
-  minimum_phase->minimum_phase_spectrum = new fft_complex[fft_size];
-  minimum_phase->cepstrum = new fft_complex[fft_size];
+  minimum_phase->log_spectrum = fftw_alloc_real(fft_size);
+//  minimum_phase->log_spectrum = new double[fft_size];
+  minimum_phase->minimum_phase_spectrum = fftw_alloc_complex(fft_size);
+//  minimum_phase->minimum_phase_spectrum = new fft_complex[fft_size];
+  minimum_phase->cepstrum = fftw_alloc_complex(fft_size);
+//  minimum_phase->cepstrum = new fft_complex[fft_size];
   minimum_phase->inverse_fft = fft_plan_dft_r2c_1d(fft_size,
       minimum_phase->log_spectrum, minimum_phase->cepstrum, FFT_ESTIMATE);
   minimum_phase->forward_fft = fft_plan_dft_1d(fft_size,
@@ -222,7 +237,10 @@ void GetMinimumPhaseSpectrum(const MinimumPhaseAnalysis *minimum_phase) {
 void DestroyMinimumPhaseAnalysis(MinimumPhaseAnalysis *minimum_phase) {
   fft_destroy_plan(minimum_phase->forward_fft);
   fft_destroy_plan(minimum_phase->inverse_fft);
-  delete[] minimum_phase->cepstrum;
-  delete[] minimum_phase->log_spectrum;
-  delete[] minimum_phase->minimum_phase_spectrum;
+  fftw_free(minimum_phase->cepstrum);
+//  delete[] minimum_phase->cepstrum;
+  fftw_free(minimum_phase->log_spectrum);
+//  delete[] minimum_phase->log_spectrum;
+  fftw_free(minimum_phase->minimum_phase_spectrum);
+//  delete[] minimum_phase->minimum_phase_spectrum;
 }

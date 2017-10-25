@@ -244,8 +244,10 @@ static double GetCurrentVUV(int current_location, WorldSynthesizer *synth) {
 //-----------------------------------------------------------------------------
 static void GetOneFrameSegment(int noise_size, int current_location,
     WorldSynthesizer *synth) {
-  double *aperiodic_response = new double[synth->fft_size];
-  double *periodic_response = new double[synth->fft_size];
+  double *aperiodic_response = fftw_alloc_real(synth->fft_size);
+//  double *aperiodic_response = new double[synth->fft_size];
+  double *periodic_response = fftw_alloc_real(synth->fft_size);
+//  double *periodic_response = new double[synth->fft_size];
   double *spectral_envelope = new double[synth->fft_size];
   double *aperiodic_ratio = new double[synth->fft_size];
 
@@ -274,8 +276,10 @@ static void GetOneFrameSegment(int noise_size, int current_location,
 
   delete[] spectral_envelope;
   delete[] aperiodic_ratio;
-  delete[] periodic_response;
-  delete[] aperiodic_response;
+  fftw_free(periodic_response);
+//  delete[] periodic_response;
+  fftw_free(aperiodic_response);
+//  delete[] aperiodic_response;
 }
 
 static void GetTemporalParametersForTimeBase(const double *f0, int f0_length,

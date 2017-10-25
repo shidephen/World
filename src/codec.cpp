@@ -121,7 +121,8 @@ static void CodeOneFrame(const double *log_spectral_envelope,
     const double *frequency_axis, int fft_size, const double *mel_axis,
     const fft_complex *weight, int max_dimension, int number_of_dimensions,
     const ForwardRealFFT *forward_real_fft, double *coded_spectral_envelope) {
-  double *mel_spectrum = new double[max_dimension];
+  double *mel_spectrum = fftw_alloc_real(max_dimension);
+//  double *mel_spectrum = new double[max_dimension];
   interp1(frequency_axis, log_spectral_envelope, fft_size / 2 + 1,
       mel_axis, max_dimension, mel_spectrum);
 
@@ -129,7 +130,8 @@ static void CodeOneFrame(const double *log_spectral_envelope,
   DCTForCodec(mel_spectrum, max_dimension, weight, forward_real_fft,
       number_of_dimensions, coded_spectral_envelope);
 
-  delete[] mel_spectrum;
+  fftw_free(mel_spectrum);
+//  delete[] mel_spectrum;
 }
 
 //-----------------------------------------------------------------------------
@@ -139,7 +141,8 @@ static void DecodeOneFrame(const double *coded_spectral_envelope,
     const double *frequency_axis, int fft_size, const double *mel_axis,
     const fft_complex *weight, int max_dimension, int number_of_dimensions,
     const InverseComplexFFT *inverse_complex_fft, double *spectral_envelope) {
-  double *mel_spectrum = new double[max_dimension + 2];
+  double *mel_spectrum = fftw_alloc_real(max_dimension + 2);
+//  double *mel_spectrum = new double[max_dimension + 2];
 
   // IDCT
   IDCTForCodec(coded_spectral_envelope, max_dimension, weight,
@@ -153,7 +156,8 @@ static void DecodeOneFrame(const double *coded_spectral_envelope,
   for (int i = 0; i < fft_size / 2 + 1; ++i)
     spectral_envelope[i] = exp(spectral_envelope[i] / max_dimension);
 
-  delete[] mel_spectrum;
+  fftw_free(mel_spectrum);
+//  delete[] mel_spectrum;
 }
 
 //-----------------------------------------------------------------------------
@@ -270,8 +274,10 @@ void CodeSpectralEnvelope(const double * const *spectrogram, int f0_length,
     double **coded_spectral_envelope) {
   double *mel_axis = new double[fft_size / 2];
   double *frequency_axis = new double[fft_size / 2 + 1];
-  double *tmp_spectrum = new double[fft_size / 2 + 1];
-  fft_complex *weight = new fft_complex[fft_size / 2];
+  double *tmp_spectrum = fftw_alloc_real(fft_size / 2 + 1);
+//  double *tmp_spectrum = new double[fft_size / 2 + 1];
+  fft_complex *weight = fftw_alloc_complex(fft_size / 2);
+//  fft_complex *weight = new fft_complex[fft_size / 2];
 
   // Generation of the required parameters
   GetParametersForCoding(world::kFloorFrequency,
@@ -290,8 +296,10 @@ void CodeSpectralEnvelope(const double * const *spectrogram, int f0_length,
   }
 
   DestroyForwardRealFFT(&forward_real_fft);
-  delete[] weight;
-  delete[] tmp_spectrum;
+  fftw_free(weight);
+//  delete[] weight;
+  fftw_free(tmp_spectrum);
+//  delete[] tmp_spectrum;
   delete[] frequency_axis;
   delete[] mel_axis;
 }
@@ -301,8 +309,10 @@ void DecodeSpectralEnvelope(const double * const *coded_spectral_envelope,
     double **spectrogram) {
   double *mel_axis = new double[fft_size / 2 + 2];
   double *frequency_axis = new double[fft_size / 2 + 1];
-  double *tmp_spectrum = new double[fft_size / 2 + 1];
-  fft_complex *weight = new fft_complex[fft_size / 2];
+  double *tmp_spectrum = fftw_alloc_real(fft_size / 2 + 1);
+//  double *tmp_spectrum = new double[fft_size / 2 + 1];
+  fft_complex *weight = fftw_alloc_complex(fft_size / 2);
+//  fft_complex *weight = new fft_complex[fft_size / 2];
 
   // Generation of the required parameters
   GetParametersForDecoding(world::kFloorFrequency,
@@ -319,8 +329,10 @@ void DecodeSpectralEnvelope(const double * const *coded_spectral_envelope,
   }
 
   DestroyInverseComplexFFT(&inverse_complex_fft);
-  delete[] weight;
-  delete[] tmp_spectrum;
+  fftw_free(weight);
+//  delete[] weight;
+  fftw_free(tmp_spectrum);
+//  delete[] tmp_spectrum;
   delete[] frequency_axis;
   delete[] mel_axis;
 }

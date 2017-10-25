@@ -139,8 +139,10 @@ static double GetMeanF0(const double *x, int x_length, int fs,
     int base_time_length) {
   ForwardRealFFT forward_real_fft = {0};
   InitializeForwardRealFFT(fft_size, &forward_real_fft);
-  fft_complex *main_spectrum = new fft_complex[fft_size];
-  fft_complex *diff_spectrum = new fft_complex[fft_size];
+  fft_complex *main_spectrum = fftw_alloc_complex(fft_size);
+//  fft_complex *main_spectrum = new fft_complex[fft_size];
+  fft_complex *diff_spectrum = fftw_alloc_complex(fft_size);
+//  fft_complex *diff_spectrum = new fft_complex[fft_size];
 
   int *index_raw = new int[base_time_length];
   double *main_window = new double[base_time_length];
@@ -165,13 +167,15 @@ static double GetMeanF0(const double *x, int x_length, int fs,
   double tentative_f0 = GetTentativeF0(power_spectrum, numerator_i,
     fft_size, fs, initial_f0);
 
-  delete[] diff_spectrum;
+  fftw_free(diff_spectrum);
+//  delete[] diff_spectrum;
   delete[] diff_window;
   delete[] main_window;
   delete[] index_raw;
   delete[] numerator_i;
   delete[] power_spectrum;
-  delete[] main_spectrum;
+  fftw_free(main_spectrum);
+//  delete[] main_spectrum;
   DestroyForwardRealFFT(&forward_real_fft);
 
   return tentative_f0;
