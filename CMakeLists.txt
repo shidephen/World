@@ -19,10 +19,16 @@ target_include_directories(world PUBLIC ${PROJECT_SOURCE_DIR}/src)
 
 set(TOOLS_SRC tools/audioio.cpp
               tools/parameterio.cpp)
-add_library(world_tools OBJECT ${TOOLS_SRC})
+add_library(world_tools STATIC ${TOOLS_SRC})
 
-# Target for synthesis
+# Target for analysis/synthesis
+
 add_executable(synthesis examples/analysis_synthesis/synthesis.cpp)
 target_include_directories(synthesis PUBLIC ${PROJECT_SOURCE_DIR}/tools
                                      PUBLIC ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(synthesis world $<TARGET_OBJECTS:world_tools>)
+target_link_libraries(synthesis world world_tools)
+
+add_executable(analysis examples/analysis_synthesis/analysis.cpp)
+target_include_directories(analysis PUBLIC ${PROJECT_SOURCE_DIR}/tools
+                                    PUBLIC ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(analysis world world_tools)
