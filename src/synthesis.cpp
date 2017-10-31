@@ -188,9 +188,9 @@ static void GetOneFrameSegment(double current_vuv, int noise_size,
     const InverseRealFFT *inverse_real_fft,
     const MinimumPhaseAnalysis *minimum_phase, const double *dc_remover,
     double *response) {
-  double *aperiodic_response = fftw_alloc_real(fft_size);
+  double *aperiodic_response = fft_alloc_real(fft_size);
 //  double *aperiodic_response = new double[fft_size];
-  double *periodic_response = fftw_alloc_real(fft_size);
+  double *periodic_response = fft_alloc_real(fft_size);
 //  double *periodic_response = new double[fft_size];
 
   double *spectral_envelope = new double[fft_size];
@@ -218,9 +218,9 @@ static void GetOneFrameSegment(double current_vuv, int noise_size,
 
   delete[] spectral_envelope;
   delete[] aperiodic_ratio;
-  fftw_free(periodic_response);
+  fft_free(periodic_response);
 //  delete[] periodic_response;
-  fftw_free(aperiodic_response);
+  fft_free(aperiodic_response);
 //  delete[] aperiodic_response;
 }
 

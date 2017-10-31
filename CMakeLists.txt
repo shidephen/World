@@ -14,8 +14,10 @@ set(WORLD_SRC src/cheaptrick.cpp
               )
               
 # Target for libworld
+# add_library(fftw3 STATIC IMPORTED lib/native/libfftw3.a)
 add_library(world SHARED ${WORLD_SRC})
 target_include_directories(world PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(world ${PROJECT_SOURCE_DIR}/lib/native/libfftw3.a)
 
 set(TOOLS_SRC tools/audioio.cpp
               tools/parameterio.cpp)

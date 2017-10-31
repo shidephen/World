@@ -9,18 +9,18 @@
 #ifndef WORLD_FFT_H_
 #define WORLD_FFT_H_
 
+#include<cstddef>
 #include "world/macrodefinitions.h"
-#include "fftw3.h"
 
 WORLD_BEGIN_C_DECLS
 
 // Commands for FFT (This is the same as FFTW)
-#define FFT_FORWARD FFTW_FORWARD
-#define FFT_BACKWARD FFTW_BACKWARD
-#define FFT_ESTIMATE FFTW_ESTIMATE
+#define FFT_FORWARD (-1)
+#define FFT_BACKWARD (+1)
+#define FFT_ESTIMATE (1U << 6)
 
 // Complex number for FFT
-#define fft_complex fftw_complex
+typedef double fft_complex[2];
 //typedef double fft_complex[2];
 // Struct used for FFT
 /*
@@ -37,22 +37,24 @@ typedef struct {
   double *w;
 } fft_plan;
  */
-#define fft_plan fftw_plan
-#define fft_plan_dft_1d fftw_plan_dft_1d
-#define fft_plan_dft_c2r_1d fftw_plan_dft_c2r_1d
-#define fft_plan_dft_r2c_1d fftw_plan_dft_r2c_1d
-#define fft_execute fftw_execute
-#define fft_destroy_plan fftw_destroy_plan
-/*
+typedef struct fftw_plan_s *fft_plan;
+
 fft_plan fft_plan_dft_1d(int n, fft_complex *in, fft_complex *out, int sign,
   unsigned int flags);
 fft_plan fft_plan_dft_c2r_1d(int n, fft_complex *in, double *out,
   unsigned int flags);
 fft_plan fft_plan_dft_r2c_1d(int n, double *in, fft_complex *out,
   unsigned int flags);
-void fft_execute(fft_plan p);
+  
 void fft_destroy_plan(fft_plan p);
-*/
+
+void fft_execute(fft_plan p);
+void fft_execute_dft_r2c(const fft_plan p, double *in, fft_complex *out);
+
+double* fft_alloc_real(size_t n);
+fft_complex* fft_alloc_complex(size_t n);
+void fft_free(void *p);
+
 WORLD_END_C_DECLS
 
 #endif  // WORLD_FFT_H_

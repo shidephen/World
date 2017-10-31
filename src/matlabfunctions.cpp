@@ -265,7 +265,7 @@ double randn(void) {
 void fast_fftfilt(const double *x, int x_length, const double *h, int h_length,
     int fft_size, const ForwardRealFFT *forward_real_fft,
     const InverseRealFFT *inverse_real_fft, double *y) {
-  fft_complex *x_spectrum = fftw_alloc_complex(fft_size);
+  fft_complex *x_spectrum = fft_alloc_complex(fft_size);
 //  fft_complex *x_spectrum = new fft_complex[fft_size];
 
   for (int i = 0; i < x_length; ++i)
@@ -297,7 +297,7 @@ void fast_fftfilt(const double *x, int x_length, const double *h, int h_length,
   for (int i = 0; i < fft_size; ++i)
     y[i] = inverse_real_fft->waveform[i];
 
-  fftw_free(x_spectrum);
+  fft_free(x_spectrum);
 //  delete[] x_spectrum;
 }
 

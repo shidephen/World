@@ -23,9 +23,9 @@ static void SmoothingWithRecovery(double f0, int fs, int fft_size, double q1,
     const ForwardRealFFT *forward_real_fft,
     const InverseRealFFT *inverse_real_fft, double *spectral_envelope) {
 //  double *smoothing_lifter = new double[fft_size];
-  double *smoothing_lifter = fftw_alloc_real(fft_size);
+  double *smoothing_lifter = fft_alloc_real(fft_size);
 //  double *compensation_lifter = new double[fft_size];
-  double *compensation_lifter = fftw_alloc_real(fft_size);
+  double *compensation_lifter = fft_alloc_real(fft_size);
 
   smoothing_lifter[0] = 1.0;
   compensation_lifter[0] = (1.0 - 2.0 * q1) + 2.0 * q1;
@@ -55,8 +55,8 @@ static void SmoothingWithRecovery(double f0, int fs, int fft_size, double q1,
     spectral_envelope[i] = exp(inverse_real_fft->waveform[i]);
 
 //  delete[] smoothing_lifter;
-  fftw_free(smoothing_lifter);
-  fftw_free(compensation_lifter);
+  fft_free(smoothing_lifter);
+  fft_free(compensation_lifter);
 }
 
 //-----------------------------------------------------------------------------

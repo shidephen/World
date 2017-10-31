@@ -61,7 +61,7 @@ static void GetSpectrumForEstimation(const double *x, int x_length,
     int y_length, double actual_fs, int fft_size, int decimation_ratio,
     fft_complex *y_spectrum) {
   //double *y = new double[fft_size];
-  double *y = fftw_alloc_real(fft_size);
+  double *y = fft_alloc_real(fft_size);
 
   // Initialization
   for (int i = 0; i < fft_size; ++i) y[i] = 0.0;
@@ -87,10 +87,10 @@ static void GetSpectrumForEstimation(const double *x, int x_length,
   int cutoff_in_sample = matlab_round(actual_fs / 50.0);  // Cutoff is 50.0 Hz
   DesignLowCutFilter(cutoff_in_sample * 2 + 1, fft_size, y);
 
-  fft_complex *filter_spectrum = fftw_alloc_complex(fft_size);
+  fft_complex *filter_spectrum = fft_alloc_complex(fft_size);
   //forwardFFT.c_out = filter_spectrum;
     //fft_execute(forwardFFT);
-    fftw_execute_dft_r2c(forwardFFT, y, filter_spectrum);
+    fft_execute_dft_r2c(forwardFFT, y, filter_spectrum);
 
   double tmp = 0;
   for (int i = 0; i <= fft_size / 2; ++i) {
@@ -103,8 +103,8 @@ static void GetSpectrumForEstimation(const double *x, int x_length,
   }
 
   fft_destroy_plan(forwardFFT);
-  fftw_free(y);
-  fftw_free(filter_spectrum);
+  fft_free(y);
+  fft_free(filter_spectrum);
 }
 
 //-----------------------------------------------------------------------------
@@ -296,7 +296,7 @@ static void FixF0Contour(double frame_period, int number_of_candidates,
 static void GetFilteredSignal(int half_average_length, int fft_size,
     const fft_complex *y_spectrum, int y_length, double *filtered_signal) {
 //  double *low_pass_filter = new double[fft_size];
-  double *low_pass_filter = fftw_alloc_real(fft_size);
+  double *low_pass_filter = fft_alloc_real(fft_size);
   // Nuttall window is used as a low-pass filter.
   // Cutoff frequency depends on the window length.
   NuttallWindow(half_average_length * 4, low_pass_filter);
@@ -304,7 +304,7 @@ static void GetFilteredSignal(int half_average_length, int fft_size,
     low_pass_filter[i] = 0.0;
 
 //  fft_complex *low_pass_filter_spectrum = new fft_complex[fft_size];
-  fft_complex *low_pass_filter_spectrum = fftw_alloc_complex(fft_size);
+  fft_complex *low_pass_filter_spectrum = fft_alloc_complex(fft_size);
   fft_plan forwardFFT = fft_plan_dft_r2c_1d(fft_size, low_pass_filter,
       low_pass_filter_spectrum, FFT_ESTIMATE);
   fft_execute(forwardFFT);
@@ -340,8 +340,8 @@ static void GetFilteredSignal(int half_average_length, int fft_size,
 
   fft_destroy_plan(inverseFFT);
   fft_destroy_plan(forwardFFT);
-    fftw_free(low_pass_filter);
-    fftw_free(low_pass_filter_spectrum);
+    fft_free(low_pass_filter);
+    fft_free(low_pass_filter_spectrum);
 //  delete[] low_pass_filter_spectrum;
 //  delete[] low_pass_filter;
 }
@@ -598,7 +598,7 @@ static void DioGeneralBody(const double *x, int x_length, int fs,
 
   // Calculation of the spectrum used for the f0 estimation
   //fft_complex *y_spectrum = new fft_complex[fft_size];
-    fft_complex* y_spectrum = fftw_alloc_complex(fft_size);
+    fft_complex* y_spectrum = fft_alloc_complex(fft_size);
   GetSpectrumForEstimation(x, x_length, y_length, actual_fs, fft_size,
       decimation_ratio, y_spectrum);
 
@@ -629,7 +629,7 @@ static void DioGeneralBody(const double *x, int x_length, int fs,
 
   delete[] best_f0_contour;
 //  delete[] y_spectrum;
-    fftw_free(y_spectrum);
+    fft_free(y_spectrum);
   for (int i = 0; i < number_of_bands; ++i) {
     delete[] f0_scores[i];
     delete[] f0_candidates[i];
