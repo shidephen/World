@@ -12,12 +12,17 @@ set(WORLD_SRC src/cheaptrick.cpp
               src/synthesis.cpp
               src/synthesisrealtime.cpp
               )
-              
+
 # Target for libworld
 # add_library(fftw3 STATIC IMPORTED lib/native/libfftw3.a)
-add_library(world SHARED ${WORLD_SRC})
+add_library(world STATIC ${WORLD_SRC})
 target_include_directories(world PUBLIC ${PROJECT_SOURCE_DIR}/include)
+if(ANDROID)
+message(STATUS "ARCH: ${CMAKE_ANDROID_ARCH_ABI}")
+target_link_libraries(world ${PROJECT_SOURCE_DIR}/lib/${CMAKE_ANDROID_ARCH_ABI}/libfftw3.a)
+else()
 target_link_libraries(world ${PROJECT_SOURCE_DIR}/lib/native/libfftw3.a)
+endif()
 
 set(TOOLS_SRC tools/audioio.cpp
               tools/parameterio.cpp)
